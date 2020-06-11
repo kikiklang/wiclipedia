@@ -1,0 +1,49 @@
+{
+  "name": "wiclipedia",
+  "version": "0.1.0",
+  "description": "wikipedia articles summaries in your terminal",
+  "license": "MIT",
+  "author": {
+    "name": "Vincent Bourdeau",
+    "email": "kikiklang@protonmail.com",
+    "url": "https://kikiklang.github.io"
+  },
+  "main": "cli.js",
+  "bin": {
+    "wicli": "./cli.js"
+  },
+  "scripts": {
+    "start": "node cli.js",
+    "test": "xo",
+    "fix": "xo --fix"
+  },
+  "files": [
+    "src",
+    "cli.js",
+    "index.js"
+  ],
+  "keywords": [
+    "cli",
+    "terminal",
+    "wikipedia",
+    "savoir",
+    "recherche"
+  ],
+  "dependencies": {
+    "boxen": "^4.2.0",
+    "chalk": "^4.0.0",
+    "clear": "^0.1.0",
+    "meow": "^7.0.1",
+    "node-fetch": "^2.6.0",
+    "ora": "^4.0.4",
+    "qoa": "^0.2.0",
+    "wtf_wikipedia": "^8.3.0"
+  },
+  "devDependencies": {
+    "xo": "^0.30.0"
+  },
+  "xo": {
+    "space": true,
+    "semicolon": false
+  }
+}
