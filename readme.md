@@ -10,12 +10,6 @@
   <img alt="Boards" width="60%" src="media/screenshot.png"/>
 </div>
 
-<p align="center">
-  <a href="https://travis-ci.com/klaussinani/taskbook">
-    <img alt="Build Status" src="https://travis-ci.com/klaussinani/taskbook.svg?branch=master">
-  </a>
-</p>
-
 ## Description
 
 Wiclipedia is a small CLI app made with nodeJs that let you search through wikipedia and display articles summaries in a practical way.

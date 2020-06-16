@@ -8,7 +8,9 @@ const chalk = require('chalk')
 exports.langQuestion = [
   {
     type: 'input',
-    query: chalk.blue.bold(' - In which language do you want the articles to be displayed ? (fr, it, en...)'),
+    query: chalk.blue.bold(
+      ' - In which language do you want the articles to be displayed (https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes)?'
+    ),
     handle: 'lang'
   }
 ]
@@ -44,4 +46,3 @@ exports.historyInteractive = {
   symbol: '>',
   menu: []
 }
-

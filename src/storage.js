@@ -4,6 +4,7 @@
 /// WRITE / READ DATA        //
 /// ///////////////////////////
 const fs = require('fs')
+const ISO6391 = require('iso-639-1')
 
 function _readData() {
   const jsonString = fs.readFileSync('./data/data.json')
@@ -33,10 +34,14 @@ exports.checkLang = () => {
 exports.storeLanguage = lang => {
   try {
     const data = _readData()
-
     data.wikiLanguage = lang
 
     _writeData(data)
+
+    return {
+      name: ISO6391.getName(lang),
+      nativeName: ISO6391.getNativeName(lang)
+    }
   } catch (error) {
     console.log(error)
   }

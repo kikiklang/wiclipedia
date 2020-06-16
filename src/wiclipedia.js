@@ -8,6 +8,7 @@ const qoa = require('qoa')
 const chalk = require('chalk')
 const boxen = require('boxen')
 const clear = require('clear')
+const os = require('os')
 
 const header = require('./header')
 const fetch = require('./fetch-data')
@@ -93,9 +94,18 @@ async function _searchAgain() {
 }
 
 exports.launchProgram = async () => {
+  console.log(os.homedir())
   await header.logAppName()
   await _askForlanguage()
   await _search()
   await _searchAgain()
+}
+
+exports.setLang = async () => {
+  const input = await qoa.prompt(prompt.langQuestion)
+  const response = await storage.storeLanguage(input.lang)
+  const {name, nativeName} = response
+
+  console.log(`you chose: ${name} (${nativeName})`)
 }
 
