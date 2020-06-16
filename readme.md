@@ -3,7 +3,7 @@
 </h1>
 
 <h4 align="center">
-  Wiclipedia articles summaries in your terminal
+  Wikipedia articles summaries in your terminal
 </h4>
 
 <div align="center">

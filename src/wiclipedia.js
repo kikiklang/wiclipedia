@@ -8,7 +8,6 @@ const qoa = require('qoa')
 const chalk = require('chalk')
 const boxen = require('boxen')
 const clear = require('clear')
-const os = require('os')
 
 const header = require('./header')
 const fetch = require('./fetch-data')
@@ -94,7 +93,6 @@ async function _searchAgain() {
 }
 
 exports.launchProgram = async () => {
-  console.log(os.homedir())
   await header.logAppName()
   await _askForlanguage()
   await _search()
