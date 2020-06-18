@@ -5,9 +5,9 @@
 /// //////////////////////
 
 const qoa = require('qoa')
-const chalk = require('chalk')
 const boxen = require('boxen')
 const clear = require('clear')
+const { italic, yellow, red, bold } = require('kleur');
 
 const header = require('./header')
 const fetch = require('./fetch-data')
@@ -32,13 +32,13 @@ function _fillInteractiveTopicsName(topics, promptName) {
   topics.forEach(item => {
     prompt[promptName].menu.push(item.title)
   })
-  prompt[promptName].menu.push(chalk.blue.yellow('(Try another search)'))
-  prompt[promptName].menu.push(chalk.blue.red('(Quit)'))
+  prompt[promptName].menu.push(yellow('(Try another search)'))
+  prompt[promptName].menu.push(red('(Quit)'))
 }
 
 function _displayArticle(result) {
-  const articleName = chalk.white.bold(result.title)
-  const link = chalk.yellow(result.url)
+  const articleName = bold(result.title)
+  const link = yellow(result.url)
 
   console.log(boxen(`${articleName} - ${link}`, options.boxenOptions('blue')))
   console.log(result.text)
@@ -47,6 +47,7 @@ function _displayArticle(result) {
 async function _askForlanguage() {
   const isLangAlreadySet = await config.checkLang()
   if (!isLangAlreadySet) {
+    console.log(italic('Full ISO codes list here -> https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes'))
     const input = await qoa.prompt(prompt.langQuestion)
     const response = await config.storeLanguage(input.lang)
     const {name, nativeName} = response
@@ -102,6 +103,7 @@ exports.launchProgram = async () => {
 }
 
 exports.setLang = async () => {
+  console.log(italic('full ISO codes list here -> https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes'))
   const input = await qoa.prompt(prompt.langQuestion)
   const response = await config.storeLanguage(input.lang)
   const {name, nativeName} = response
