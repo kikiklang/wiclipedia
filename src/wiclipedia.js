@@ -12,7 +12,7 @@ const clear = require('clear')
 const header = require('./header')
 const fetch = require('./fetch-data')
 const prompt = require('./prompt')
-const storage = require('./storage')
+const config = require('./config')
 const options = require('./boxen-options')
 
 function _checkUserAnswers(input) {
@@ -45,17 +45,19 @@ function _displayArticle(result) {
 }
 
 async function _askForlanguage() {
-  const isLangAlreadySet = await storage.checkLang()
+  const isLangAlreadySet = await config.checkLang()
   if (!isLangAlreadySet) {
     const input = await qoa.prompt(prompt.langQuestion)
-    await storage.storeLanguage(input.lang)
+    const response = await config.storeLanguage(input.lang)
+    const {name, nativeName} = response
+    console.log(`you chose: ${name} (${nativeName})`)
   }
 }
 
 async function _askForATopic() {
   try {
     const input = await qoa.prompt(prompt.topicQuestion)
-    const lang = await storage.checkLang()
+    const lang = await config.checkLang()
     const suggestedTopics = await fetch.getSuggestedTopic(input.userSearch, lang)
     _fillInteractiveTopicsName(suggestedTopics, 'topicInteractive')
   } catch (error) {
@@ -66,7 +68,7 @@ async function _askForATopic() {
 async function _refineTopics() {
   const input = await qoa.interactive(prompt.topicInteractive)
   await _checkUserAnswers(input)
-  const lang = await storage.checkLang()
+  const lang = await config.checkLang()
   const response = await fetch.getArticle(input.userPick, lang)
 
   _displayArticle(response)
@@ -101,7 +103,7 @@ exports.launchProgram = async () => {
 
 exports.setLang = async () => {
   const input = await qoa.prompt(prompt.langQuestion)
-  const response = await storage.storeLanguage(input.lang)
+  const response = await config.storeLanguage(input.lang)
   const {name, nativeName} = response
 
   console.log(`you chose: ${name} (${nativeName})`)

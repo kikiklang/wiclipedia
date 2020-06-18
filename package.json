@@ -46,5 +46,9 @@
   "xo": {
     "space": true,
     "semicolon": false
+  },
+  "configuration": {
+    "appLanguage": "",
+    "wikiLanguage": ""
   }
 }
