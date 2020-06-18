@@ -55,4 +55,4 @@ $ wicli --help
 
 ## License
 
-[MIT](https://github.com/klaussinani/taskbook/blob/master/license.md)
+[MIT](https://github.com/kikiklang/wiclipedia/blob/master/license.md)

@@ -3,7 +3,7 @@
 /// //////////////////////////////
 /// PROMPT QOA OPTIONS          //
 /// //////////////////////////////
-const { bold } = require('kleur');
+const {bold} = require('kleur')
 
 exports.langQuestion = [
   {

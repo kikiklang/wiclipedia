@@ -7,7 +7,7 @@
 const qoa = require('qoa')
 const boxen = require('boxen')
 const clear = require('clear')
-const { italic, yellow, red, bold } = require('kleur');
+const {italic, yellow, red, bold} = require('kleur')
 
 const header = require('./header')
 const fetch = require('./fetch-data')

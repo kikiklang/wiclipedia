@@ -2,6 +2,7 @@
   "name": "wiclipedia",
   "version": "0.1.0",
   "description": "wikipedia articles summaries in your terminal",
+  "repository": "kikiklang/wiclipedia",
   "license": "MIT",
   "author": {
     "name": "Vincent Bourdeau",
