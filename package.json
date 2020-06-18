@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "wikipedia articles summaries in your terminal",
   "repository": "kikiklang/wiclipedia",
+  "homepage": "https://github.com/kikiklang/wiclipedia",
   "license": "MIT",
   "author": {
     "name": "Vincent Bourdeau",
@@ -23,6 +24,10 @@
     "cli.js",
     "index.js"
   ],
+  "engines": {
+    "node": ">=8"
+  },
+  "preferGlobal": true,
   "keywords": [
     "cli",
     "terminal",
