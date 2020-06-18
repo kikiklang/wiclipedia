@@ -12,20 +12,20 @@
 
 ## Description
 
-Wiclipedia is a small CLI app made with nodeJs that let you search through wikipedia and display articles summaries in a practical way.
+Wiclipedia is a CLI app made with nodeJs that let you search through wikipedia and display articles summaries in a practical way.
 
 ## Install
 
 ### Yarn
 
 ```bash
-soon...
+yarn global add wiclipedia
 ```
 
 ### NPM
 
 ```bash
-soon...
+npm install --global wiclipedia
 ```
 
 ## Usage
