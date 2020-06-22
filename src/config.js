@@ -3,23 +3,22 @@
 /// /////////////////////////////
 /// WRITE / READ CONFIG        //
 /// /////////////////////////////
-const fs = require('fs')
+const Configstore = require('configstore')
 const pkg = require('../package.json')
 const ISO6391 = require('iso-639-1')
 
-exports.checkLang = () => {
-  const jsonString = fs.readFileSync('../package.json')
-  const pkg = JSON.parse(jsonString)
+exports.model = new Configstore(pkg.name, {
+  appLanguage: '',
+  wikiLanguage: 'en'
+})
 
-  return pkg.configuration.wikiLanguage
+exports.checkLang = () => {
+  return this.model.get('wikiLanguage')
 }
 
 exports.storeLanguage = lang => {
   if (ISO6391.getName(lang)) {
-    pkg.configuration.wikiLanguage = lang
-    const json = JSON.stringify(pkg, null, 2)
-
-    fs.writeFileSync('../package.json', json)
+    this.model.set('wikiLanguage', lang)
 
     return {
       name: ISO6391.getName(lang),

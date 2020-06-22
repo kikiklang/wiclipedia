@@ -96,6 +96,7 @@ async function _searchAgain() {
 }
 
 exports.launchProgram = async () => {
+  await config.model
   await header.logAppName()
   await _askForlanguage()
   await _search()
