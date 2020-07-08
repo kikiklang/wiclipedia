@@ -18,6 +18,10 @@ const cli = meow(help, {
     lang: {
       type: 'boolean',
       alias: 'l'
+    },
+    previous: {
+      type: 'boolean',
+      alias: 'p'
     }
   }
 })

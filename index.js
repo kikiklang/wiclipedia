@@ -8,6 +8,10 @@ const wikipediaCLI = flags => {
     return wiclipedia.setLang()
   }
 
+  if (flags.previous) {
+    return wiclipedia.showPreviousSearches()
+  }
+
   return wiclipedia.launchProgram()
 }
 
