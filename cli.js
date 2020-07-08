@@ -22,6 +22,10 @@ const cli = meow(help, {
     previous: {
       type: 'boolean',
       alias: 'p'
+    },
+    clear: {
+      type: 'boolean',
+      alias: 'c'
     }
   }
 })

@@ -6,7 +6,6 @@
 const Configstore = require('configstore')
 const pkg = require('../package.json')
 const ISO6391 = require('iso-639-1')
-const { config } = require('qoa')
 
 exports.model = new Configstore(pkg.name, {
   appLanguage: '',
@@ -37,9 +36,13 @@ exports.storeSearches = (userInput, lang) => {
   const data = {
     timestamp: Date.now(),
     search: userInput,
-    lang: lang
+    lang
   }
 
   history.unshift(data)
   this.model.set('history', history)
+}
+
+exports.clear = () => {
+  this.model.set('history', [])
 }

@@ -52,6 +52,7 @@
   },
   "xo": {
     "space": true,
-    "semicolon": false
+    "semicolon": false,
+    "no-process-exit": false
   }
 }

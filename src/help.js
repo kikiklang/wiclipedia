@@ -8,7 +8,8 @@ module.exports = `
         none              launch wiclipedia
       --version, -v       print app version
       --lang, -l          set language for wikipedia articles (english by default)
-      --previous, -p      display previous searches
+      --previous, -p      display and use previous searches
+      --clear, -c         clear search history
 
     Examples
       $ wicli

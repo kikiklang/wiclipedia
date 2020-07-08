@@ -12,6 +12,10 @@ const wikipediaCLI = flags => {
     return wiclipedia.showPreviousSearches()
   }
 
+  if (flags.clear) {
+    return wiclipedia.clearHistory()
+  }
+
   return wiclipedia.launchProgram()
 }
 
