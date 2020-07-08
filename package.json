@@ -53,6 +53,5 @@
   "xo": {
     "space": true,
     "semicolon": false,
-    "no-process-exit": false
   }
 }
