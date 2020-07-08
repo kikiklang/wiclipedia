@@ -9,7 +9,7 @@ const wikipediaCLI = flags => {
   }
 
   if (flags.previous) {
-    return wiclipedia.showPreviousSearches()
+    return wiclipedia.displayPreviousSearches()
   }
 
   if (flags.clear) {

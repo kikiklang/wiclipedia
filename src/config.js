@@ -35,7 +35,7 @@ exports.storeSearches = (userInput, lang) => {
   const history = this.model.get('history')
   const data = {
     timestamp: Date.now(),
-    search: userInput,
+    title: userInput,
     lang
   }
 
@@ -45,4 +45,16 @@ exports.storeSearches = (userInput, lang) => {
 
 exports.clear = () => {
   this.model.set('history', [])
+}
+
+exports.getHistory = () => {
+  const history = this.model.get('history')
+  const format = history.map(search => {
+    return {
+      title: `[${search.lang}] ${search.title}`
+    }
+  }
+  )
+
+  return format
 }
