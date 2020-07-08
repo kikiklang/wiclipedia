@@ -32,8 +32,8 @@
     "cli",
     "terminal",
     "wikipedia",
-    "savoir",
-    "recherche"
+    "app",
+    "search"
   ],
   "dependencies": {
     "boxen": "^4.2.0",
