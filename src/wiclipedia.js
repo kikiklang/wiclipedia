@@ -72,6 +72,7 @@ async function _refineTopics() {
   const lang = await config.checkLang()
   const response = await fetch.getArticle(input.userPick, lang)
 
+  config.storeSearches(input.userPick, lang)
   _displayArticle(response)
   prompt.topicInteractive.menu = []
 }
@@ -112,3 +113,22 @@ exports.setLang = async () => {
   console.log(`you chose: ${name} (${nativeName})`)
 }
 
+exports.clearHistory = () => {
+  config.clear()
+
+  console.log('history is clear now')
+}
+
+exports.displayPreviousSearches = async () => {
+  const history = await config.getHistory()
+
+  await _fillInteractiveTopicsName(history, 'historyInteractive')
+  const input = await qoa.interactive(prompt.historyInteractive)
+  await _checkUserAnswers(input)
+
+  const lang = input.userPick.slice(0, input.userPick.indexOf(' ')).replace(/[[\]']+/g, '')
+  const title = input.userPick.slice(input.userPick.indexOf(' ') + 1)
+  const response = await fetch.getArticle(title, lang)
+  _displayArticle(response)
+  prompt.historyInteractive.menu = []
+}

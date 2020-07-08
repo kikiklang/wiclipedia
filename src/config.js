@@ -9,7 +9,8 @@ const ISO6391 = require('iso-639-1')
 
 exports.model = new Configstore(pkg.name, {
   appLanguage: '',
-  wikiLanguage: 'en'
+  wikiLanguage: 'en',
+  history: []
 })
 
 exports.checkLang = () => {
@@ -28,4 +29,32 @@ exports.storeLanguage = lang => {
 
   console.log('Your code is unknown, please select another one')
   process.exit(1)
+}
+
+exports.storeSearches = (userInput, lang) => {
+  const history = this.model.get('history')
+  const data = {
+    timestamp: Date.now(),
+    title: userInput,
+    lang
+  }
+
+  history.unshift(data)
+  this.model.set('history', history)
+}
+
+exports.clear = () => {
+  this.model.set('history', [])
+}
+
+exports.getHistory = () => {
+  const history = this.model.get('history')
+  const format = history.map(search => {
+    return {
+      title: `[${search.lang}] ${search.title}`
+    }
+  }
+  )
+
+  return format
 }
