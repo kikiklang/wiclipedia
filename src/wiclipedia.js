@@ -56,14 +56,10 @@ async function _askForlanguage() {
 }
 
 async function _askForATopic() {
-  try {
-    const input = await qoa.prompt(prompt.topicQuestion)
-    const lang = await config.checkLang()
-    const suggestedTopics = await fetch.getSuggestedTopic(input.userSearch, lang)
-    _fillInteractiveTopicsName(suggestedTopics, 'topicInteractive')
-  } catch (error) {
-    console.log(error)
-  }
+  const input = await qoa.prompt(prompt.topicQuestion)
+  const lang = await config.checkLang()
+  const suggestedTopics = await fetch.getSuggestedTopic(input.userSearch, lang)
+  _fillInteractiveTopicsName(suggestedTopics, 'topicInteractive')
 }
 
 async function _refineTopics() {

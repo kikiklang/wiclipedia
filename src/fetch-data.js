@@ -27,7 +27,8 @@ const getSuggestedTopic = async (userInput, lang) => {
 
     return result
   } catch (error) {
-    console.log(error)
+    console.log('sorry, there is a problem with that request')
+    process.exit(1)
   }
 }
 
@@ -45,7 +46,8 @@ const getArticle = async (userPick, lang) => {
 
     return result
   } catch (error) {
-    console.log(error)
+    console.log('sorry, there is a problem with that request')
+    process.exit(1)
   }
 }
 
