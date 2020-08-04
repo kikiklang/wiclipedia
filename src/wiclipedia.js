@@ -41,7 +41,22 @@ function _displayArticle(result) {
   const link = yellow(result.url)
 
   console.log(boxen(`${articleName} - ${link}`, options.boxenOptions('blue')))
-  console.log(result.text)
+  console.log(_lineWrapper(result.text))
+}
+
+function _lineWrapper(text) {
+  let index = 0
+  const result = text.split('').map(char => {
+    if (char === ' ' && index > 80) {
+      char = '\n'
+      index = 0
+    }
+
+    index++
+    return char
+  })
+
+  return result.join('')
 }
 
 async function _askForlanguage() {
