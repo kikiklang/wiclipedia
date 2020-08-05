@@ -131,7 +131,7 @@ exports.setLang = async () => {
 }
 
 exports.clearHistory = () => {
-  config.clear()
+  config.clearHistory()
 
   console.log('history is clear now')
 }
