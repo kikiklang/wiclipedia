@@ -6,7 +6,6 @@
 
 const qoa = require('qoa')
 const boxen = require('boxen')
-const clear = require('clear')
 const {italic, yellow, red, bold} = require('kleur')
 
 const header = require('./header')
@@ -17,7 +16,7 @@ const options = require('./boxen-options')
 
 function _checkUserAnswers(input) {
   if (input.userPick.includes('(Try another search)')) {
-    clear()
+    process.stdout.write('\u001Bc') // Clear the console
     header.logAppName()
     prompt.topicInteractive.menu = []
     return _search()
@@ -101,7 +100,7 @@ async function _search() {
 async function _searchAgain() {
   const input = await qoa.confirm(prompt.topicRedo)
   if (input.redo) {
-    clear()
+    process.stdout.write('\u001Bc') // Clear the console
     await header.logAppName()
     await _search()
     await _searchAgain()
