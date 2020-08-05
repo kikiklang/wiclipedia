@@ -40,7 +40,6 @@ function _displayArticle(result) {
   const articleName = bold(result.title)
   const link = yellow(result.url)
   const lineLength = process.stdout.columns
-  console.log(lineLength)
 
   console.log(boxen(`${articleName} - ${link}`, options.boxenOptions('blue')))
   console.log(lineLength < 85 ? result.text : _lineWrapper(result.text))
@@ -131,7 +130,7 @@ exports.setLang = async () => {
 }
 
 exports.clearHistory = () => {
-  config.clear()
+  config.clearHistory()
 
   console.log('history is clear now')
 }
