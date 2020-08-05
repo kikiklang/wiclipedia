@@ -39,24 +39,30 @@ function _fillInteractiveTopicsName(topics, promptName) {
 function _displayArticle(result) {
   const articleName = bold(result.title)
   const link = yellow(result.url)
+  const lineLength = process.stdout.columns
+  console.log(lineLength)
 
   console.log(boxen(`${articleName} - ${link}`, options.boxenOptions('blue')))
-  console.log(_lineWrapper(result.text))
+  console.log(lineLength < 85 ? result.text : _lineWrapper(result.text))
 }
 
 function _lineWrapper(text) {
   let index = 0
-  const result = text.split('').map(char => {
-    if (char === ' ' && index > 80) {
-      char = '\n'
-      index = 0
-    }
+  return text
+    .split('')
+    .map(char => {
+      if (char === '\n') {
+        index = 0
+      }
 
-    index++
-    return char
-  })
+      if (char === ' ' && index > 80) {
+        char = '\n'
+        index = 0
+      }
 
-  return result.join('')
+      index++
+      return char
+    }).join('')
 }
 
 async function _askForlanguage() {
