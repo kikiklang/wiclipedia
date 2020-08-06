@@ -2,9 +2,9 @@
 'use strict'
 
 const meow = require('meow')
-const updateNotifier = require('update-notifier');
+const updateNotifier = require('update-notifier')
 const help = require('./src/help')
-const pkg = require('./package.json');
+const pkg = require('./package.json')
 const launch = require('./index')
 
 const cli = meow(help, {
@@ -32,7 +32,7 @@ const cli = meow(help, {
   }
 })
 
-updateNotifier({pkg}).notify();
+updateNotifier({pkg}).notify()
 
 launch.wikipediaCLI(cli.flags)
 

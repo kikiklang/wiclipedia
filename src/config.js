@@ -43,7 +43,7 @@ exports.storeSearches = (userInput, lang) => {
   this.model.set('history', history)
 }
 
-exports.clear = () => {
+exports.clearHistory = () => {
   this.model.set('history', [])
 }
 
