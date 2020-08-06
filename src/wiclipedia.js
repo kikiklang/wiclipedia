@@ -27,6 +27,12 @@ function _checkUserAnswers(input) {
     return _search()
   }
 
+  if (input.userPick.includes('(Try another random)')) {
+    process.stdout.write('\u001Bc') // Clear the console
+    prompt.topicInteractive.menu = []
+    displayRandomArticlesList()
+  }
+
   if (input.userPick.includes('(Quit)')) {
     process.exit(1)
   }
@@ -41,7 +47,9 @@ function _fillInteractiveTopicsName(topics, promptName) {
   topics.forEach(item => {
     prompt[promptName].menu.push(item.title)
   })
-  prompt[promptName].menu.push(yellow('(Try another search)'))
+  promptName === 'randomInteractive' 
+    ? prompt[promptName].menu.push(yellow('(Try another random)')) 
+    : prompt[promptName].menu.push(yellow('(Try another search)'))
   prompt[promptName].menu.push(red('(Quit)'))
 }
 
@@ -127,7 +135,7 @@ async function _refineTopics() {
 }
 
 /**
- * Just calling other functions
+ * Just calling other functions ¯\_(ツ)_/¯
  */
 async function _search() {
   await _askForATopic()
@@ -199,3 +207,29 @@ exports.displayPreviousSearches = async () => {
   _displayArticle(response)
   prompt.historyInteractive.menu = []
 }
+
+/**
+ * Allow the user to display a list of random articles
+ * Pick one of them, trigger an api call and display the response
+ */
+const displayRandomArticlesList = async () => {
+  console.log('1111');
+  const lang = await config.checkLang()
+  console.log('2222');
+  const suggestedTopics = await fetch.getRandomSuggestions(lang)
+  console.log('3333');
+  _fillInteractiveTopicsName(suggestedTopics, 'randomInteractive')
+  console.log('4444');
+  const input = await qoa.interactive(prompt.randomInteractive)
+  console.log('5555');
+  await _checkUserAnswers(input)
+  console.log('6666');
+  config.storeSearches(input.userPick, lang)
+  console.log('7777');
+  const response = await fetch.getArticle(input.userPick, lang)
+  console.log('8888');
+  _displayArticle(response)
+  prompt.historyInteractive.menu = []
+}
+
+exports.displayRandomArticlesList = displayRandomArticlesList

@@ -44,3 +44,11 @@ exports.historyInteractive = {
   symbol: '>',
   menu: []
 }
+
+exports.randomInteractive = {
+  type: 'interactive',
+  query: bold().blue(' - here is a list of 10 random topics...'),
+  handle: 'userPick',
+  symbol: '>',
+  menu: []
+}
