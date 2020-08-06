@@ -14,6 +14,11 @@ const prompt = require('./prompt')
 const config = require('./config')
 const options = require('./boxen-options')
 
+/**
+ * Check the user's answer picked from the prompt.
+ * Check specifically if the user decided to quit the program or wanted to make another search
+ * @param  {String} input The picked choice after prompt
+ */
 function _checkUserAnswers(input) {
   if (input.userPick.includes('(Try another search)')) {
     process.stdout.write('\u001Bc') // Clear the console
@@ -27,6 +32,11 @@ function _checkUserAnswers(input) {
   }
 }
 
+/**
+ * Fill an array with all possibles values for interactive menu based prompt
+ * @param  {Array} topics set of values coming from wikipedia API
+ * @param  {String} promptName Allow to pick the right prompt
+ */
 function _fillInteractiveTopicsName(topics, promptName) {
   topics.forEach(item => {
     prompt[promptName].menu.push(item.title)
@@ -35,6 +45,10 @@ function _fillInteractiveTopicsName(topics, promptName) {
   prompt[promptName].menu.push(red('(Quit)'))
 }
 
+/**
+ * Log / display the article summaries choosen by the user
+ * @param  {Object} result the response object received from the API call
+ */
 function _displayArticle(result) {
   const articleName = bold(result.title)
   const link = yellow(result.url)
@@ -44,6 +58,10 @@ function _displayArticle(result) {
   console.log(lineLength < 85 ? result.text : _lineWrapper(result.text))
 }
 
+/**
+ * Format the logged article summary to avoid long line of text and offer better reading experience
+ * @param  {String} text the summary received from the API call
+ */
 function _lineWrapper(text) {
   let index = 0
   return text
@@ -63,6 +81,11 @@ function _lineWrapper(text) {
     }).join('')
 }
 
+/**
+ * Display a prompt that helps user to set a language
+ * Save the answer to a json file
+ * Display a confirmation to the user
+ */
 async function _askForlanguage() {
   const isLangAlreadySet = await config.checkLang()
   if (!isLangAlreadySet) {
@@ -74,6 +97,11 @@ async function _askForlanguage() {
   }
 }
 
+/**
+ * Display a prompt that ask the user to choose a topic
+ * check the stored language config
+ * call the wikipedia API for a set of topics
+ */
 async function _askForATopic() {
   const input = await qoa.prompt(prompt.topicQuestion)
   const lang = await config.checkLang()
@@ -81,6 +109,12 @@ async function _askForATopic() {
   _fillInteractiveTopicsName(suggestedTopics, 'topicInteractive')
 }
 
+/**
+ * Display a prompt that ask the user to choose between a list of topics
+ * check the stored language config
+ * call the wikipedia API to request the choosen article
+ * save the search
+ */
 async function _refineTopics() {
   const input = await qoa.interactive(prompt.topicInteractive)
   await _checkUserAnswers(input)
@@ -92,11 +126,17 @@ async function _refineTopics() {
   prompt.topicInteractive.menu = []
 }
 
+/**
+ * Just calling other functions
+ */
 async function _search() {
   await _askForATopic()
   await _refineTopics()
 }
 
+/**
+ * Check if the user wants to make another research
+ */
 async function _searchAgain() {
   const input = await qoa.confirm(prompt.topicRedo)
   if (input.redo) {
@@ -111,6 +151,9 @@ async function _searchAgain() {
   }
 }
 
+/**
+ * Bootstrap the app
+ */
 exports.launchProgram = async () => {
   await config.model
   await header.logAppName()
@@ -119,6 +162,9 @@ exports.launchProgram = async () => {
   await _searchAgain()
 }
 
+/**
+ * Allow the user to specify a language for the displayed articles
+ */
 exports.setLang = async () => {
   console.log(italic('full ISO codes list here -> https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes'))
   const input = await qoa.prompt(prompt.langQuestion)
@@ -128,12 +174,18 @@ exports.setLang = async () => {
   console.log(`you chose: ${name} (${nativeName})`)
 }
 
+/**
+ * Allow the user to delete all previous searches
+ */
 exports.clearHistory = () => {
   config.clearHistory()
 
   console.log('history is clear now')
 }
 
+/**
+ * Allow the user to display all previous searches
+ */
 exports.displayPreviousSearches = async () => {
   const history = await config.getHistory()
 
