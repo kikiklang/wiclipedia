@@ -47,9 +47,9 @@ function _fillInteractiveTopicsName(topics, promptName) {
   topics.forEach(item => {
     prompt[promptName].menu.push(item.title)
   })
-  promptName === 'randomInteractive' 
-    ? prompt[promptName].menu.push(yellow('(Try another random)')) 
-    : prompt[promptName].menu.push(yellow('(Try another search)'))
+  promptName === 'randomInteractive' ?
+    prompt[promptName].menu.push(yellow('(Try another random)')) :
+    prompt[promptName].menu.push(yellow('(Try another search)'))
   prompt[promptName].menu.push(red('(Quit)'))
 }
 

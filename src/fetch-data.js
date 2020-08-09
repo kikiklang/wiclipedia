@@ -27,7 +27,7 @@ exports.getSuggestedTopic = async (userInput, lang) => {
 
     return result
   } catch (error) {
-    console.log('sorry, there is a problem with that request')
+    console.log('sorry, there is a problem with that request', error)
     process.exit(1)
   }
 }
@@ -52,7 +52,7 @@ exports.getRandomSuggestions = async lang => {
 
     return result
   } catch (error) {
-    console.log('sorry, there is a problem with that request')
+    console.log('sorry, there is a problem with that request', error)
     process.exit(1)
   }
 }
@@ -71,7 +71,7 @@ exports.getArticle = async (userPick, lang) => {
 
     return result
   } catch (error) {
-    console.log('sorry, there is a problem with that request')
+    console.log('sorry, there is a problem with that request', error)
     process.exit(1)
   }
 }
