@@ -29,8 +29,8 @@ function _checkUserAnswers(input) {
 
   if (input.userPick.includes('(Try another random)')) {
     process.stdout.write('\u001Bc') // Clear the console
-    prompt.topicInteractive.menu = []
-    displayRandomArticlesList()
+    prompt.randomInteractive.menu = []
+    return displayRandomArticlesList()
   }
 
   if (input.userPick.includes('(Quit)')) {
@@ -213,21 +213,14 @@ exports.displayPreviousSearches = async () => {
  * Pick one of them, trigger an api call and display the response
  */
 const displayRandomArticlesList = async () => {
-  console.log('1111');
+  await header.logAppName()
   const lang = await config.checkLang()
-  console.log('2222');
   const suggestedTopics = await fetch.getRandomSuggestions(lang)
-  console.log('3333');
   _fillInteractiveTopicsName(suggestedTopics, 'randomInteractive')
-  console.log('4444');
   const input = await qoa.interactive(prompt.randomInteractive)
-  console.log('5555');
   await _checkUserAnswers(input)
-  console.log('6666');
   config.storeSearches(input.userPick, lang)
-  console.log('7777');
   const response = await fetch.getArticle(input.userPick, lang)
-  console.log('8888');
   _displayArticle(response)
   prompt.historyInteractive.menu = []
 }
