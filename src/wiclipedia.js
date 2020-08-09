@@ -19,7 +19,7 @@ const options = require('./boxen-options')
  * Check specifically if the user decided to quit the program or wanted to make another search
  * @param  {String} input The picked choice after prompt
  */
-function _checkUserAnswers(input) {
+function _checkUserAnswers(input, lang) {
   if (input.userPick.includes('(Try another search)')) {
     process.stdout.write('\u001Bc') // Clear the console
     header.logAppName()
@@ -36,6 +36,8 @@ function _checkUserAnswers(input) {
   if (input.userPick.includes('(Quit)')) {
     process.exit(1)
   }
+
+  config.storeSearches(input.userPick, lang)
 }
 
 /**
@@ -125,11 +127,10 @@ async function _askForATopic() {
  */
 async function _refineTopics() {
   const input = await qoa.interactive(prompt.topicInteractive)
-  await _checkUserAnswers(input)
   const lang = await config.checkLang()
+  await _checkUserAnswers(input, lang)
   const response = await fetch.getArticle(input.userPick, lang)
 
-  config.storeSearches(input.userPick, lang)
   _displayArticle(response)
   prompt.topicInteractive.menu = []
 }
@@ -218,8 +219,7 @@ const displayRandomArticlesList = async () => {
   const suggestedTopics = await fetch.getRandomSuggestions(lang)
   _fillInteractiveTopicsName(suggestedTopics, 'randomInteractive')
   const input = await qoa.interactive(prompt.randomInteractive)
-  await _checkUserAnswers(input)
-  config.storeSearches(input.userPick, lang)
+  await _checkUserAnswers(input, lang)
   const response = await fetch.getArticle(input.userPick, lang)
   _displayArticle(response)
   prompt.historyInteractive.menu = []
