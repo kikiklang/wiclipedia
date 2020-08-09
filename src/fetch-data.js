@@ -7,7 +7,7 @@ const fetch = require('node-fetch')
 const ora = require('ora')
 const wtf = require('wtf_wikipedia')
 
-const getSuggestedTopic = async (userInput, lang) => {
+exports.getSuggestedTopic = async (userInput, lang) => {
   const domain = `https://${lang}.wikipedia.org`
   const path = '/w/api.php'
   const action = 'query'
@@ -27,12 +27,37 @@ const getSuggestedTopic = async (userInput, lang) => {
 
     return result
   } catch (error) {
-    console.log('sorry, there is a problem with that request')
+    console.log('sorry, there is a problem with that request', error)
     process.exit(1)
   }
 }
 
-const getArticle = async (userPick, lang) => {
+exports.getRandomSuggestions = async lang => {
+  const domain = `https://${lang}.wikipedia.org`
+  const path = '/w/api.php'
+  const action = 'query'
+  const format = 'json'
+  const list = 'random'
+  const rnlimit = 10
+  const rnnamespace = 0
+  const endpoint = `${domain}${path}?action=${action}&format=${format}&list=${list}&rnlimit=${rnlimit}&rnnamespace=${rnnamespace}`
+
+  try {
+    const spinner = ora('waiting for the response...').start()
+    const response = await fetch(endpoint)
+    const data = await response.json()
+    const result = Object.values(data.query.random)
+
+    spinner.stop()
+
+    return result
+  } catch (error) {
+    console.log('sorry, there is a problem with that request', error)
+    process.exit(1)
+  }
+}
+
+exports.getArticle = async (userPick, lang) => {
   try {
     const spinner = ora('waiting for the article...').start()
     const doc = await wtf.fetch(userPick, lang)
@@ -46,11 +71,8 @@ const getArticle = async (userPick, lang) => {
 
     return result
   } catch (error) {
-    console.log('sorry, there is a problem with that request')
+    console.log('sorry, there is a problem with that request', error)
     process.exit(1)
   }
 }
-
-exports.getSuggestedTopic = getSuggestedTopic
-exports.getArticle = getArticle
 

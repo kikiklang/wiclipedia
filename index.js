@@ -16,6 +16,10 @@ const wikipediaCLI = flags => {
     return wiclipedia.clearHistory()
   }
 
+  if (flags.random) {
+    return wiclipedia.displayRandomArticlesList()
+  }
+
   return wiclipedia.launchProgram()
 }
 

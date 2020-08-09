@@ -19,7 +19,7 @@ const options = require('./boxen-options')
  * Check specifically if the user decided to quit the program or wanted to make another search
  * @param  {String} input The picked choice after prompt
  */
-function _checkUserAnswers(input) {
+function _checkUserAnswers(input, lang) {
   if (input.userPick.includes('(Try another search)')) {
     process.stdout.write('\u001Bc') // Clear the console
     header.logAppName()
@@ -27,9 +27,17 @@ function _checkUserAnswers(input) {
     return _search()
   }
 
+  if (input.userPick.includes('(Try another random)')) {
+    process.stdout.write('\u001Bc') // Clear the console
+    prompt.randomInteractive.menu = []
+    return displayRandomArticlesList()
+  }
+
   if (input.userPick.includes('(Quit)')) {
     process.exit(1)
   }
+
+  config.storeSearches(input.userPick, lang)
 }
 
 /**
@@ -41,7 +49,9 @@ function _fillInteractiveTopicsName(topics, promptName) {
   topics.forEach(item => {
     prompt[promptName].menu.push(item.title)
   })
-  prompt[promptName].menu.push(yellow('(Try another search)'))
+  promptName === 'randomInteractive' ?
+    prompt[promptName].menu.push(yellow('(Try another random)')) :
+    prompt[promptName].menu.push(yellow('(Try another search)'))
   prompt[promptName].menu.push(red('(Quit)'))
 }
 
@@ -117,17 +127,16 @@ async function _askForATopic() {
  */
 async function _refineTopics() {
   const input = await qoa.interactive(prompt.topicInteractive)
-  await _checkUserAnswers(input)
   const lang = await config.checkLang()
+  await _checkUserAnswers(input, lang)
   const response = await fetch.getArticle(input.userPick, lang)
 
-  config.storeSearches(input.userPick, lang)
   _displayArticle(response)
   prompt.topicInteractive.menu = []
 }
 
 /**
- * Just calling other functions
+ * Just calling other functions ¯\_(ツ)_/¯
  */
 async function _search() {
   await _askForATopic()
@@ -199,3 +208,21 @@ exports.displayPreviousSearches = async () => {
   _displayArticle(response)
   prompt.historyInteractive.menu = []
 }
+
+/**
+ * Allow the user to display a list of random articles
+ * Pick one of them, trigger an api call and display the response
+ */
+const displayRandomArticlesList = async () => {
+  await header.logAppName()
+  const lang = await config.checkLang()
+  const suggestedTopics = await fetch.getRandomSuggestions(lang)
+  _fillInteractiveTopicsName(suggestedTopics, 'randomInteractive')
+  const input = await qoa.interactive(prompt.randomInteractive)
+  await _checkUserAnswers(input, lang)
+  const response = await fetch.getArticle(input.userPick, lang)
+  _displayArticle(response)
+  prompt.historyInteractive.menu = []
+}
+
+exports.displayRandomArticlesList = displayRandomArticlesList
