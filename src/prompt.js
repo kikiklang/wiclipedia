@@ -52,3 +52,11 @@ exports.randomInteractive = {
   symbol: '>',
   menu: []
 }
+
+exports.randomAgain = {
+  type: 'confirm',
+  query: bold().blue(' - Would you like to try another random?'),
+  handle: 'redo',
+  accept: 'y',
+  deny: 'n'
+}

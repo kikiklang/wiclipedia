@@ -161,6 +161,21 @@ async function _searchAgain() {
 }
 
 /**
+ * Check if the user wants to make another research
+ */
+async function _randomAgain() {
+  const input = await qoa.confirm(prompt.randomAgain)
+  if (input.redo) {
+    process.stdout.write('\u001Bc') // Clear the console
+    displayRandomArticlesList()
+  }
+
+  if (!input.redo) {
+    process.exit(1)
+  }
+}
+
+/**
  * Bootstrap the app
  */
 exports.launchProgram = async () => {
@@ -222,7 +237,8 @@ const displayRandomArticlesList = async () => {
   await _checkUserAnswers(input, lang)
   const response = await fetch.getArticle(input.userPick, lang)
   _displayArticle(response)
-  prompt.historyInteractive.menu = []
+  prompt.randomInteractive.menu = []
+  _randomAgain()
 }
 
 exports.displayRandomArticlesList = displayRandomArticlesList
