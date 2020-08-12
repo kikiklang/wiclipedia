@@ -20,6 +20,10 @@ const wikipediaCLI = flags => {
     return wiclipedia.displayRandomArticlesList()
   }
 
+  if (flags.top) {
+    return wiclipedia.mostViewedYesterday()
+  }
+
   return wiclipedia.launchProgram()
 }
 

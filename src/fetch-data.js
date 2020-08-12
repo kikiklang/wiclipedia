@@ -76,3 +76,23 @@ exports.getArticle = async (userPick, lang) => {
   }
 }
 
+exports.mostViewedYesterday = async () => {
+  const year = new Date().getFullYear()
+  const month = new Date().getMonth() + 1 < 10 ? `0${new Date().getMonth() + 1}` : new Date().getMonth() + 1
+  const day = new Date().getDate() - 1
+  const url = `https://wikimedia.org/api/rest_v1/metrics/pageviews/top/en.wikipedia/all-access/${year}/${month}/${day}`
+
+  try {
+    const spinner = ora('waiting for the response...').start()
+    const response = await fetch(url)
+    const data = await response.json()
+    const result = data.items[0].articles.slice(0, 17).filter(object => object.article !== 'Main_Page' && object.article !== 'Special:Search')
+
+    spinner.stop()
+
+    return result
+  } catch (error) {
+    console.log('sorry, there is a problem with that request', error)
+    process.exit(1)
+  }
+}

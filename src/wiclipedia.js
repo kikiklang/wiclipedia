@@ -47,11 +47,13 @@ function _checkUserAnswers(input, lang) {
  */
 function _fillInteractiveTopicsName(topics, promptName) {
   topics.forEach(item => {
-    prompt[promptName].menu.push(item.title)
+    prompt[promptName].menu.push(item.title || item.article)
   })
-  promptName === 'randomInteractive' ?
-    prompt[promptName].menu.push(yellow('(Try another random)')) :
-    prompt[promptName].menu.push(yellow('(Try another search)'))
+
+  if (promptName === 'randomInteractive') {
+    prompt[promptName].menu.push(yellow('(Try another random)')) 
+  }
+  prompt[promptName].menu.push(yellow('(Try another search)'))
   prompt[promptName].menu.push(red('(Quit)'))
 }
 
@@ -211,8 +213,8 @@ exports.clearHistory = () => {
  * Allow the user to display all previous searches
  */
 exports.displayPreviousSearches = async () => {
+  await header.logAppName()
   const history = await config.getHistory()
-
   await _fillInteractiveTopicsName(history, 'historyInteractive')
   const input = await qoa.interactive(prompt.historyInteractive)
   await _checkUserAnswers(input)
@@ -222,6 +224,21 @@ exports.displayPreviousSearches = async () => {
   const response = await fetch.getArticle(title, lang)
   _displayArticle(response)
   prompt.historyInteractive.menu = []
+}
+
+/**
+ * show the user the 15 most viewed articles the day before the current day
+ * Pick one of them, trigger an api call and display the response
+ */
+exports.mostViewedYesterday = async () => {
+  await header.logAppName()
+  const topArticles = await fetch.mostViewedYesterday()
+  _fillInteractiveTopicsName(topArticles, 'topInteractive')
+  const input = await qoa.interactive(prompt.topInteractive)
+  await _checkUserAnswers(input, 'en')
+  const response = await fetch.getArticle(input.userPick, 'en')
+  _displayArticle(response)
+  prompt.topInteractive.menu = []
 }
 
 /**
