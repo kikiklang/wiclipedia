@@ -32,6 +32,10 @@ const cli = meow(help, {
     random: {
       type: 'boolean',
       alias: 'r'
+    },
+    top: {
+      type: 'boolean',
+      alias: 't'
     }
   }
 })

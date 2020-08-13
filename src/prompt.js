@@ -60,3 +60,11 @@ exports.randomAgain = {
   accept: 'y',
   deny: 'n'
 }
+
+exports.topInteractive = {
+  type: 'interactive',
+  query: bold().blue(' - here is a list of the 15 most viewed articles yesterday... (english only)'),
+  handle: 'userPick',
+  symbol: '>',
+  menu: []
+}

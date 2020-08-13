@@ -53,8 +53,7 @@ exports.getHistory = () => {
     return {
       title: `[${search.lang}] ${search.title}`
     }
-  }
-  )
+  })
 
   return format
 }

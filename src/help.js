@@ -11,10 +11,12 @@ module.exports = `
       --previous, -p      display and use previous searches
       --clear, -c         clear search history
       --random, -r        suggest random articles
+      --top, -t           find most viewed articles yesterday ( english only )
 
     Examples
       $ wicli
       $ wicli --lang
       $ wicli --previous
       $ wicli --random
+      $ wicli --top
 `
