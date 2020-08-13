@@ -23,7 +23,7 @@ const options = require('./boxen-options')
  * Check specifically if the user decided to quit the program or wanted to make another search
  * @param  {String} input The picked choice after prompt
  */
-function _checkUserAnswers(input, lang) {
+function _checkUserAnswers(input) {
   if (input.userPick.includes('(Try another search)')) {
     process.stdout.write('\u001Bc') // Clear the console
     header.logAppName()
