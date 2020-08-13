@@ -14,6 +14,10 @@ const prompt = require('./prompt')
 const config = require('./config')
 const options = require('./boxen-options')
 
+/// //////////////////////
+/// PRIVATE FUNCTIONS   //
+/// //////////////////////
+
 /**
  * Check the user's answer picked from the prompt.
  * Check specifically if the user decided to quit the program or wanted to make another search
@@ -36,8 +40,6 @@ function _checkUserAnswers(input, lang) {
   if (input.userPick.includes('(Quit)')) {
     process.exit(1)
   }
-
-  config.storeSearches(input.userPick, lang)
 }
 
 /**
@@ -51,8 +53,9 @@ function _fillInteractiveTopicsName(topics, promptName) {
   })
 
   if (promptName === 'randomInteractive') {
-    prompt[promptName].menu.push(yellow('(Try another random)')) 
+    prompt[promptName].menu.push(yellow('(Try another random)'))
   }
+
   prompt[promptName].menu.push(yellow('(Try another search)'))
   prompt[promptName].menu.push(red('(Quit)'))
 }
@@ -94,22 +97,6 @@ function _lineWrapper(text) {
 }
 
 /**
- * Display a prompt that helps user to set a language
- * Save the answer to a json file
- * Display a confirmation to the user
- */
-async function _askForlanguage() {
-  const isLangAlreadySet = await config.checkLang()
-  if (!isLangAlreadySet) {
-    console.log(italic('Full ISO codes list here -> https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes'))
-    const input = await qoa.prompt(prompt.langQuestion)
-    const response = await config.storeLanguage(input.lang)
-    const {name, nativeName} = response
-    console.log(`you chose: ${name} (${nativeName})`)
-  }
-}
-
-/**
  * Display a prompt that ask the user to choose a topic
  * check the stored language config
  * call the wikipedia API for a set of topics
@@ -132,6 +119,7 @@ async function _refineTopics() {
   const lang = await config.checkLang()
   await _checkUserAnswers(input, lang)
   const response = await fetch.getArticle(input.userPick, lang)
+  config.storeSearches(input.userPick, lang)
 
   _displayArticle(response)
   prompt.topicInteractive.menu = []
@@ -177,13 +165,16 @@ async function _randomAgain() {
   }
 }
 
+/// ///////////////////
+/// MAIN FUNCTIONS   //
+/// ///////////////////
+
 /**
  * Bootstrap the app
  */
 exports.launchProgram = async () => {
   await config.model
   await header.logAppName()
-  await _askForlanguage()
   await _search()
   await _searchAgain()
 }
@@ -224,10 +215,11 @@ exports.displayPreviousSearches = async () => {
   const response = await fetch.getArticle(title, lang)
   _displayArticle(response)
   prompt.historyInteractive.menu = []
+  _searchAgain()
 }
 
 /**
- * show the user the 15 most viewed articles the day before the current day
+ * Show the user the 15 most viewed articles the day before the current day
  * Pick one of them, trigger an api call and display the response
  */
 exports.mostViewedYesterday = async () => {
@@ -238,6 +230,7 @@ exports.mostViewedYesterday = async () => {
   await _checkUserAnswers(input, 'en')
   const response = await fetch.getArticle(input.userPick, 'en')
   _displayArticle(response)
+  config.storeSearches(input.userPick, 'en')
   prompt.topInteractive.menu = []
 }
 
@@ -254,6 +247,7 @@ const displayRandomArticlesList = async () => {
   await _checkUserAnswers(input, lang)
   const response = await fetch.getArticle(input.userPick, lang)
   _displayArticle(response)
+  config.storeSearches(input.userPick, lang)
   prompt.randomInteractive.menu = []
   _randomAgain()
 }

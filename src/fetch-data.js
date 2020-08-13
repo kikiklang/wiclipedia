@@ -86,13 +86,14 @@ exports.mostViewedYesterday = async () => {
     const spinner = ora('waiting for the response...').start()
     const response = await fetch(url)
     const data = await response.json()
+    console.log(data);
     const result = data.items[0].articles.slice(0, 17).filter(object => object.article !== 'Main_Page' && object.article !== 'Special:Search')
 
     spinner.stop()
 
     return result
   } catch (error) {
-    console.log('sorry, there is a problem with that request', error)
+    console.log('sorry, there is a problem with that request')
     process.exit(1)
   }
 }
