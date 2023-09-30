@@ -1,9 +1,5 @@
 'use strict'
 
-/// //////////////////////
-/// WICLIPEDIA          //
-/// //////////////////////
-
 const qoa = require('qoa')
 const boxen = require('boxen')
 const {italic, yellow, red, bold} = require('kleur')
@@ -14,44 +10,51 @@ const prompt = require('./prompt')
 const config = require('./config')
 const options = require('./boxen-options')
 
-/// //////////////////////
-/// PRIVATE FUNCTIONS   //
-/// //////////////////////
-
 /**
- * Check the user's answer picked from the prompt.
- * Check specifically if the user decided to quit the program or wanted to make another search
- * @param  {String} input The picked choice after prompt
+ * Clears the console and logs the app name.
  */
-function _checkUserAnswers(input) {
-  if (input.userPick.includes('(Try another search)')) {
-    process.stdout.write('\u001Bc') // Clear the console
-    header.logAppName()
-    prompt.topicInteractive.menu = []
-    return _search()
-  }
-
-  if (input.userPick.includes('(Try another random)')) {
-    process.stdout.write('\u001Bc') // Clear the console
-    prompt.randomInteractive.menu = []
-    return displayRandomArticlesList()
-  }
-
-  if (input.userPick.includes('(Quit)')) {
-    process.exit(1)
-  }
+async function clearConsoleAndLogHeader() {
+  process.stdout.write('\u001Bc') // Clear the console
+  await header.logAppName()
 }
 
 /**
- * Fill an array with all possibles values for interactive menu based prompt
- * @param  {Array} topics set of values coming from wikipedia API
- * @param  {String} promptName Allow to pick the right prompt
+ * Wrapper function for handling user picked choices.
+ * @param {Object} input - The input object containing user's choice.
+ * @param {string} lang - The current language setting.
  */
-function _fillInteractiveTopicsName(topics, promptName) {
+async function handleUserChoices(input, lang) {
+  const choice = input.userPick
+  if (choice.includes('(Try another search)')) {
+    await clearConsoleAndLogHeader()
+    return initiateSearch()
+  }
+
+  if (choice.includes('(Try another random)')) {
+    await clearConsoleAndLogHeader()
+    return displayRandomArticlesList()
+  }
+
+  if (choice.includes('(Quit)')) {
+    process.exit(1)
+  }
+
+  const response = await fetch.getArticle(choice, lang)
+  config.storeSearches(choice, lang)
+  displayArticle(response)
+}
+
+/**
+ * Fills an interactive menu with topic names.
+ * @param {Array} topics - Array of topics from Wikipedia API.
+ * @param {string} promptName - The name of the prompt to fill.
+ */
+function fillInteractiveTopicsName(topics, promptName) {
   topics.forEach(item => {
     prompt[promptName].menu.push(item.title || item.article)
   })
 
+  // Additional menu items based on prompt type
   if (promptName === 'randomInteractive') {
     prompt[promptName].menu.push(yellow('(Try another random)'))
   }
@@ -61,195 +64,130 @@ function _fillInteractiveTopicsName(topics, promptName) {
 }
 
 /**
- * Log / display the article summaries choosen by the user
- * @param  {Object} result the response object received from the API call
+ * Displays an article.
+ * @param {Object} result - The result object from the API call.
  */
-function _displayArticle(result) {
+function displayArticle(result) {
   const articleName = bold(result.title)
   const link = yellow(result.url)
-  const lineLength = process.stdout.columns
-
-  console.log(boxen(`${articleName} - ${link}`, options.boxenOptions('blue')))
-  console.log(lineLength < 85 ? result.text : _lineWrapper(result.text))
+  const boxContent = `${articleName} - ${link}`
+  console.log(boxen(boxContent, options.boxenOptions('blue')))
+  console.log(result.text)
 }
 
 /**
- * Format the logged article summary to avoid long line of text and offer better reading experience
- * @param  {String} text the summary received from the API call
+ * Initiates a new search.
  */
-function _lineWrapper(text) {
-  let index = 0
-  return text
-    .split('')
-    .map(char => {
-      if (char === '\n') {
-        index = 0
-      }
-
-      if (char === ' ' && index > 80) {
-        char = '\n'
-        index = 0
-      }
-
-      index++
-      return char
-    }).join('')
+async function initiateSearch() {
+  await askForATopic()
+  await refineTopics()
 }
 
 /**
- * Display a prompt that ask the user to choose a topic
- * check the stored language config
- * call the wikipedia API for a set of topics
+ * Asks the user for a topic.
  */
-async function _askForATopic() {
+async function askForATopic() {
   const input = await qoa.prompt(prompt.topicQuestion)
   const lang = await config.checkLang()
   const suggestedTopics = await fetch.getSuggestedTopic(input.userSearch, lang)
-  _fillInteractiveTopicsName(suggestedTopics, 'topicInteractive')
+  fillInteractiveTopicsName(suggestedTopics, 'topicInteractive')
 }
 
 /**
- * Display a prompt that ask the user to choose between a list of topics
- * check the stored language config
- * call the wikipedia API to request the choosen article
- * save the search
+ * Refines the topic based on user input.
  */
-async function _refineTopics() {
+async function refineTopics() {
   const input = await qoa.interactive(prompt.topicInteractive)
   const lang = await config.checkLang()
-  await _checkUserAnswers(input, lang)
-  const response = await fetch.getArticle(input.userPick, lang)
-  config.storeSearches(input.userPick, lang)
-
-  _displayArticle(response)
-  prompt.topicInteractive.menu = []
+  await handleUserChoices(input, lang)
 }
 
 /**
- * Just calling other functions ¯\_(ツ)_/¯
+ * Asks the user if they want to perform another search.
  */
-async function _search() {
-  await _askForATopic()
-  await _refineTopics()
-}
-
-/**
- * Check if the user wants to make another research
- */
-async function _searchAgain() {
+async function searchAgain() {
   const input = await qoa.confirm(prompt.topicRedo)
   if (input.redo) {
-    process.stdout.write('\u001Bc') // Clear the console
-    await header.logAppName()
-    await _search()
-    await _searchAgain()
-  }
-
-  if (!input.redo) {
+    await clearConsoleAndLogHeader()
+    await initiateSearch()
+    await searchAgain()
+  } else {
     process.exit(1)
   }
 }
 
-/**
- * Check if the user wants to make another research
- */
-async function _randomAgain() {
-  const input = await qoa.confirm(prompt.randomAgain)
-  if (input.redo) {
-    process.stdout.write('\u001Bc') // Clear the console
-    displayRandomArticlesList()
-  }
-
-  if (!input.redo) {
-    process.exit(1)
-  }
-}
-
-/// ///////////////////
-/// MAIN FUNCTIONS   //
-/// ///////////////////
+// Main functions
 
 /**
- * Bootstrap the app
+ * Launches the program by initiating a new search and handles subsequent search requests.
+ * @returns {Promise<void>}
  */
 exports.launchProgram = async () => {
   await config.model
-  await header.logAppName()
-  await _search()
-  await _searchAgain()
+  await clearConsoleAndLogHeader()
+  await initiateSearch()
+  await searchAgain()
 }
 
 /**
- * Allow the user to specify a language for the displayed articles
- */
+* Allows the user to set a preferred language for displayed articles.
+* @returns {Promise<void>}
+*/
 exports.setLang = async () => {
   console.log(italic('full ISO codes list here -> https://en.wikipedia.org/wiki/List_of_ISO_639-1_codes'))
   const input = await qoa.prompt(prompt.langQuestion)
   const response = await config.storeLanguage(input.lang)
   const {name, nativeName} = response
-
   console.log(`you chose: ${name} (${nativeName})`)
 }
 
 /**
- * Allow the user to delete all previous searches
- */
+* Allows the user to clear all previous searches.
+*/
 exports.clearHistory = () => {
   config.clearHistory()
-
   console.log('history is clear now')
 }
 
 /**
- * Allow the user to display all previous searches
+ * Allows the user to display all previous searches.
+ * @returns {Promise<void>}
  */
 exports.displayPreviousSearches = async () => {
-  await header.logAppName()
-  const history = await config.getHistory()
-  await _fillInteractiveTopicsName(history, 'historyInteractive')
-  const input = await qoa.interactive(prompt.historyInteractive)
-  await _checkUserAnswers(input)
+  const history = await config.retrieveHistory()
 
-  const lang = input.userPick.slice(0, input.userPick.indexOf(' ')).replace(/[[\]']+/g, '')
-  const title = input.userPick.slice(input.userPick.indexOf(' ') + 1)
-  const response = await fetch.getArticle(title, lang)
-  _displayArticle(response)
-  prompt.historyInteractive.menu = []
-  _searchAgain()
+  if (history.length === 0) {
+    console.log('No previous searches found.')
+    return
+  }
+
+  history.forEach((search, index) => {
+    console.log(`${index + 1}. ${search.topic} (${search.lang})`)
+  })
 }
 
 /**
- * Show the user the 15 most viewed articles the day before the current day
- * Pick one of them, trigger an api call and display the response
+ * Displays the most viewed articles from the previous day.
+ * @returns {Promise<void>}
  */
 exports.mostViewedYesterday = async () => {
-  await header.logAppName()
-  const topArticles = await fetch.mostViewedYesterday()
-  _fillInteractiveTopicsName(topArticles, 'topInteractive')
-  const input = await qoa.interactive(prompt.topInteractive)
-  await _checkUserAnswers(input, 'en')
-  const response = await fetch.getArticle(input.userPick, 'en')
-  _displayArticle(response)
-  config.storeSearches(input.userPick, 'en')
-  prompt.topInteractive.menu = []
+  const lang = await config.checkLang()
+  const articles = await fetch.getMostViewed(lang)
+  fillInteractiveTopicsName(articles, 'mostViewedInteractive')
+  const input = await qoa.interactive(prompt.mostViewedInteractive)
+  await handleUserChoices(input, lang)
 }
 
 /**
- * Allow the user to display a list of random articles
- * Pick one of them, trigger an api call and display the response
+ * Displays a list of random articles.
+ * @returns {Promise<void>}
  */
-const displayRandomArticlesList = async () => {
-  await header.logAppName()
+async function displayRandomArticlesList() {
   const lang = await config.checkLang()
-  const suggestedTopics = await fetch.getRandomSuggestions(lang)
-  _fillInteractiveTopicsName(suggestedTopics, 'randomInteractive')
+  const randomArticles = await fetch.getRandomArticles(lang)
+  fillInteractiveTopicsName(randomArticles, 'randomInteractive')
   const input = await qoa.interactive(prompt.randomInteractive)
-  await _checkUserAnswers(input, lang)
-  const response = await fetch.getArticle(input.userPick, lang)
-  _displayArticle(response)
-  config.storeSearches(input.userPick, lang)
-  prompt.randomInteractive.menu = []
-  _randomAgain()
+  await handleUserChoices(input, lang)
 }
 
 exports.displayRandomArticlesList = displayRandomArticlesList

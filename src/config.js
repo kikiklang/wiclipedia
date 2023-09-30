@@ -1,38 +1,55 @@
 'use strict'
 
-/// /////////////////////////////
-/// WRITE / READ CONFIG        //
-/// /////////////////////////////
 const Configstore = require('configstore')
 const pkg = require('../package.json')
 const ISO6391 = require('iso-639-1')
 
-exports.model = new Configstore(pkg.name, {
+/**
+ * Configuration model instance.
+ */
+const model = new Configstore(pkg.name, {
   appLanguage: '',
   wikiLanguage: 'en',
   history: []
 })
 
-exports.checkLang = () => {
-  return this.model.get('wikiLanguage')
+/**
+ * Checks the stored Wikipedia language.
+ *
+ * @returns {string} - The stored Wikipedia language code.
+ */
+const checkLang = () => {
+  return model.get('wikiLanguage')
 }
 
-exports.storeLanguage = lang => {
-  if (ISO6391.getName(lang)) {
-    this.model.set('wikiLanguage', lang)
-
+/**
+ * Validates and stores a new Wikipedia language.
+ *
+ * @param {string} lang - The language code to store.
+ * @returns {object|null} - An object with the language name and native name, or null if the language code is invalid.
+ * @throws {Error} - Throws an error if the language code is invalid.
+ */
+const storeLanguage = lang => {
+  const langName = ISO6391.getName(lang)
+  if (langName) {
+    model.set('wikiLanguage', lang)
     return {
-      name: ISO6391.getName(lang),
+      name: langName,
       nativeName: ISO6391.getNativeName(lang)
     }
   }
 
-  console.log('Your code is unknown, please select another one')
-  process.exit(1)
+  throw new Error('Invalid language code. Please select another one.')
 }
 
-exports.storeSearches = (userInput, lang) => {
-  const history = this.model.get('history')
+/**
+ * Stores a new search in the history.
+ *
+ * @param {string} userInput - The user's search input.
+ * @param {string} lang - The language code of the search.
+ */
+const storeSearches = (userInput, lang) => {
+  const history = model.get('history')
   const data = {
     timestamp: Date.now(),
     title: userInput,
@@ -40,20 +57,33 @@ exports.storeSearches = (userInput, lang) => {
   }
 
   history.unshift(data)
-  this.model.set('history', history)
+  model.set('history', history)
 }
 
-exports.clearHistory = () => {
-  this.model.set('history', [])
+/**
+ * Clears the search history.
+ */
+const clearHistory = () => {
+  model.set('history', [])
 }
 
-exports.getHistory = () => {
-  const history = this.model.get('history')
-  const format = history.map(search => {
-    return {
-      title: `[${search.lang}] ${search.title}`
-    }
+/**
+ * Retrieves the formatted search history.
+ *
+ * @returns {Array} - The formatted search history.
+ */
+const getHistory = () => {
+  const history = model.get('history')
+  return history.map(search => {
+    return {title: `[${search.lang}] ${search.title}`}
   })
+}
 
-  return format
+module.exports = {
+  model,
+  checkLang,
+  storeLanguage,
+  storeSearches,
+  clearHistory,
+  getHistory
 }

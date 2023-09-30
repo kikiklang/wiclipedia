@@ -56,7 +56,7 @@ $ wicli --help
 - Fork the repository and clone it to your machine
 - Navigate to your local fork: `cd wiclipedia`
 - Install the project dependencies: `npm install` or `yarn install`
-- Lint the code for errors: `npm test` or `yarn test`
+- Lint the code for errors: `npm lint` or `npm lint-fix`
 
 ## License
 

@@ -16,8 +16,9 @@
   },
   "scripts": {
     "start": "node cli.js",
-    "test": "xo",
-    "fix": "xo --fix"
+    "test": "jest",
+    "lint": "xo",
+    "lint-fix": "xo --fix"
   },
   "files": [
     "src",
@@ -25,7 +26,7 @@
     "index.js"
   ],
   "engines": {
-    "node": ">=8"
+    "node": ">=10"
   },
   "preferGlobal": true,
   "keywords": [
@@ -48,10 +49,16 @@
     "wtf_wikipedia": "^8.3.0"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "xo": "^0.30.0"
   },
   "xo": {
     "space": true,
-    "semicolon": false
+    "semicolon": false,
+    "rules": {
+			"unicorn/no-process-exit": "off",
+      "unicorn/import-index": "off",
+      "import/extensions": "off"
+		}
   }
 }

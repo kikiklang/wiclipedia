@@ -1,5 +1,9 @@
 'use strict'
 
+/**
+ * Provides help text for the CLI, including usage, options, and examples.
+ * @module help
+ */
 module.exports = `
   Usage
     $ wicli [<options> ...]
@@ -11,7 +15,7 @@ module.exports = `
       --previous, -p      display and use previous searches
       --clear, -c         clear search history
       --random, -r        suggest random articles
-      --top, -t           find most viewed articles yesterday ( english only )
+      --top, -t           find most viewed articles yesterday (english only)
 
     Examples
       $ wicli
